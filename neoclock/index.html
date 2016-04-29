@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图片时钟实例</title>
+    <style>
+        ul{
+            margin: 0;
+            padding: 0;
+            list-style:none;
+        }
+        li{
+            width: 122px;
+            height: 172px;
+            outline: 1px solid #bababa;
+            font-size: 0;
+            float: left;
+            overflow: hidden;
+        }
+        img{
+            position: relative;
+            top: 0;
+        }
+
+    </style>
+    <script src="neo.js"></script>
+    <script>
+        window.onload=function() {
+            var stri = '';
+            var oldStri='';
+            var timer = null;
+            var onOff=1;
+            var co1=document.getElementById('co1');
+            var co2=document.getElementById('co2');
+            var ul = document.getElementById('list');
+            var li = ul.getElementsByTagName('li');
+            var attr = ["img/numner/0.JPG", "img/numner/1.JPG", "img/numner/2.JPG",
+                "img/numner/3.JPG", "img/numner/4.JPG", "img/numner/5.JPG", "img/numner/6.JPG", "img/numner/7.JPG"
+                , "img/numner/8.JPG", "img/numner/9.JPG"];
+            var liAttr=[];
+
+            fnTime();//这个函数要首先就执行，不然下面对stri的操作就是空的数组
+            Tab1();
+            //把显示数字的li元素取出来存放在一个数组中，方便操作。
+            for(var i=0;i<li.length;i++){
+                if(i==2||i==5)continue;
+                else{
+                    liAttr.push(li[i]);
+                }
+            }
+            //开定时器，每一秒钟刷新一次；
+            timer = setInterval(function () {
+                fnTime();
+                Tab1();
+                //下面执行判断操作，
+                for(var i=0;i<stri.length;i++){
+                    if(stri.charAt(i)!==oldStri[i]){
+                        Fresh(i,liAttr[i].getElementsByTagName('img'));
+                    }
+                }
+            }, 1000);
+            setInterval(function(){
+                if(onOff){
+                    co1.style.background='url("img/numner/bg.jpg")';
+                    co2.style.background='url("img/numner/bg.jpg")';
+                    onOff=0;
+                }else{
+                    co1.style.background='url("img/numner/colon.jpg")';
+                    co2.style.background='url("img/numner/colon.jpg")';
+                    onOff=1;
+                }
+
+            },500);
+
+            //把上一秒时间对应的数字取出来放在img中
+            function Tab1(){
+                for(i=0;i<liAttr.length;i++) {
+                    var liImg = liAttr[i].getElementsByTagName('img');
+                    var num = Number(oldStri.charAt(i));
+                    liImg[0].src = attr[num];
+                    liImg[1].src = attr[(num+1)%10];
+                }
+            }
+            function fnTime() {
+                var myTime = new Date();
+                var p = document.getElementById('p');
+                var iHours = myTime.getHours();
+                var iMinu = myTime.getMinutes();
+                var iSeco = myTime.getSeconds();
+                oldStri=stri;//将上一秒钟的时间存起来
+                stri = toTwo(iHours) + toTwo(iMinu) + toTwo(iSeco);
+                p.innerHTML = stri;
+            }
+
+            function toTwo(n) {
+                return n < 10 ? '0' + n : '' + n;
+            }
+
+            function Fresh(n,m) {
+                var seco = Number(stri.charAt(n));//得到的是字符串
+                doMove(m[0], 'top', 10, -172, function () {  //将上一秒的时间移动上去
+                    m[0].src = attr[(seco) % 10];
+                    m[0].style.top = '0';
+
+                });
+                doMove(m[1], 'top', 10, -172, function () {
+                    m[1].src = attr[(seco) % 10];
+                    m[1].style.top = '0';
+                });
+
+            }//end Fresh
+
+        };//end window.onload
+       
+       
+    </script>
+</head>
+<body>
+<p id="p" style="font-size: 20px"></p>
+<ul id="list">
+    <li>
+        <img/>
+        <img/>
+    </li>
+    <li>
+        <img/>
+        <img/>
+    </li>
+    <li id="co1">
+        <img/>
+
+    </li>
+    <li>
+        <img/>
+        <img/>
+    </li>
+    <li>
+        <img/>
+        <img/>
+    </li>
+    <li id="co2">
+        <img />
+    </li>
+    <li>
+        <img/>
+        <img/>
+    </li>
+    <li>
+        <img/>
+        <img/>
+    </li>
+</ul>
+</body>
+</html>
